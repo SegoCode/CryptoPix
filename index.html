@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>SegoCode</title>
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Varela+Round" rel="stylesheet">
+	<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.10/css/all.css'>
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+
+  <body>
+    <!-- Bots HoneyPot -->
+
+
+    <!-- -->
+	<div class="wrapper">
+	  <div class="container">
+		<h1 class="main-letters">Upload a image</h1>
+		<h4 class="main-letters"> Anonymous image sharing with client side encryption</h4>
+		<div class="upload-container">
+		
+		 <!-- No files attached -->
+		  <div id="dropzone" class="border-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+			<div class="icons fa-4x">
+			  <i class="fas fa-file-image"></i>
+			</div>
+			<p> Drag and drop the image here from your computer.</p>
+		  </div>
+		  
+		  <!-- Files attached -->
+		  <p id="filename" style="display:none;"></p>
+		  <img id="showimg" style="display:none;" class="img-panel" src=""/>
+		  
+		</div>
+		<button id="uploadbutton" style="display:none;" onclick="encryptAndSend({{.Uid}})">Upload</button>
+		 
+	  </div>
+	</div>
+   
+    <!-- JS -->
+    <script src="./assets/script.js"></script>
+    <script src="https://unpkg.com/baffle@0.3.6/dist/baffle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" crossorigin="anonymous"></script>
+	
+	<script src='https://use.fontawesome.com/releases/v5.0.10/js/all.js' crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js" crossorigin="anonymous"></script>
+  </body>
+
+</html>
