@@ -103,7 +103,7 @@ func uploader(w http.ResponseWriter, r *http.Request) {
     }
 	
 	//Generate file on server
-	if(existuid){
+	if(existuid){ // go rutine?
 		datafile, _ := os.Create("uploads/"+tempFile.Uid+".file")
 		defer datafile.Close()
 		datafile.WriteString(tempFile.Base64)
