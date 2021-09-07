@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"math/rand"
 	"encoding/json"
+	"time"
+	"math"
 )
 
 type sessionData struct {
@@ -18,6 +20,9 @@ type file struct {
 	Base64 string
 	Uid string
 }
+
+var activeUid []string
+var dateUid  []time.Time
 
 func generateToken() string {
     b := make([]byte, 10)
@@ -32,6 +37,18 @@ func homePage(w http.ResponseWriter, r *http.Request) {
     }
     parsedTemplate, _ := template.ParseFiles("index.html")
     parsedTemplate.Execute(w, authStruct)
+	activeUid = append(activeUid, uid)
+	dateUid = append(dateUid, time.Now())
+	//time.Sleep(60 * time.Second)
+	
+	printSlice()
+}
+
+func printSlice() {
+	for i, s := range activeUid {
+		log.Println(s)
+		log.Println(math.Trunc(time.Now().Sub(dateUid[i]).Minutes()))
+	}
 	
 }
 

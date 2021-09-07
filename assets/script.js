@@ -1,24 +1,16 @@
 var fileupload;
 
-
-
-function encryptAndSend(uid) {
-
-}
-
-function sendPost(data, uid) {
+function sendPost(uid) {
 	var axios = window.axios;
 	axios.post('./upload', {
 		Name: fileupload.name,
-		Base64: data,
+		Base64: document.getElementById("showimg").src,
 		Uid: uid
 	  }).then(function (response) {
 		console.log(response);
 	  })
 
 }
-
-
 
 
 function dropHandler(ev) {
