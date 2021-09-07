@@ -1,6 +1,9 @@
 var fileupload;
 
 function sendPost(uid) {
+	
+	var encryptImage = CryptoJS.AES.encrypt(document.getElementById("showimg").src, 'secret key');
+	
 	var axios = window.axios;
 	axios.post('./upload', {
 		Name: fileupload.name,
@@ -9,6 +12,8 @@ function sendPost(uid) {
 	  }).then(function (response) {
 		console.log(response);
 	  })
+	  
+	document.getElementById("uploadbutton").innerHTML = "Copy link";
 
 }
 
