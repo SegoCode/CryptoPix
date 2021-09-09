@@ -2,20 +2,24 @@ var fileupload;
 
 function sendPost(uid) {
 	
-	var encryptImage = CryptoJS.AES.encrypt(document.getElementById("showimg").src, 'secret key');
+	//var encryptImage = CryptoJS.AES.encrypt(document.getElementById("showimg").src, 'secret key');
+	document.getElementById("uploadbutton").style.display = "none";
+	document.getElementById("loaderAnimation").style.display = "";
 	
-	var axios = window.axios;
-	axios.post('./upload', {
-		Name: fileupload.name,
-		Base64: document.getElementById("showimg").src,
-		Uid: uid
-	  }).then(function (response) {
-		console.log(response);
-	  })
-	  
-	document.getElementById("uploadbutton").innerHTML = "Copy link";
-
+	(async () => {
+		var axios = window.axios;
+		axios.post('./upload', {
+			Name: fileupload.name,
+			Base64: document.getElementById("showimg").src,
+			Uid: uid
+		  }).then(function (response) {
+			document.getElementById("loaderAnimation").style.display = "none";
+			document.getElementById("uploadbutton").style.display = "";
+			document.getElementById("uploadbutton").innerHTML = "Copy link";
+		  })
+	})();
 }
+
 
 
 function dropHandler(ev) {

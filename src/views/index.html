@@ -26,6 +26,7 @@
 			  <i class="fas fa-file-image"></i>
 			</div>
 			<p> Drag and drop the image here from your computer.</p>
+			
 		  </div>
 		  
 		  <!-- Files attached -->
@@ -34,7 +35,15 @@
 		  
 		</div>
 		<button id="uploadbutton" style="display:none;" onclick="sendPost({{.Uid}})">Upload</button>
-		 
+		
+		<!-- Loading animation -->
+		<div id="loaderAnimation" style="display:none" class="lds-ellipsis">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>	
+		
 	  </div>
 	</div>
    

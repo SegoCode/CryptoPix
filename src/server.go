@@ -75,7 +75,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	authStruct := sessionData{
         Uid:       uid,
     }
-    parsedTemplate, _ := template.ParseFiles("index.html")
+    parsedTemplate, _ := template.ParseFiles("views/index.html")
     parsedTemplate.Execute(w, authStruct)
 	
 	//Clean old UID
@@ -104,10 +104,12 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 	
 	//Generate file on server
 	if(existuid){ // go rutine?
-		datafile, _ := os.Create("uploads/"+tempFile.Uid+".file")
-		defer datafile.Close()
-		datafile.WriteString(tempFile.Base64)
-		datafile.Close()
+	  go func() {
+			datafile, _ := os.Create("uploads/"+tempFile.Uid+".file")
+			defer datafile.Close()
+			datafile.WriteString(tempFile.Base64)
+			datafile.Close()
+	  }()
 	}
 }
 
