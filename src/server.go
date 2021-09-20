@@ -11,11 +11,15 @@ import (
 	"math"
 	"os"
 	"io/ioutil"
-	"fmt"
+	"strconv"
 )
 
 type sessionData struct {
     Uid string
+}
+
+type shareData struct {
+    Imgd string
 }
 
 type file struct {
@@ -28,7 +32,7 @@ var activeUid []string
 var dateUid  []time.Time
 
 func generateToken() string {
-	//Insecure uid generator
+	//Insecure uid generator?
     b := make([]byte, 10)
 	rand.Read(b)
     return hex.EncodeToString(b)
@@ -36,18 +40,33 @@ func generateToken() string {
 
 func fileCleanerWorker(){
 	log.Println("Cleaning old files...")
+	loc, _ := time.LoadLocation("UTC")
+	now := time.Now().In(loc)
+	
 	for{
+		deleted := 0
 		files, _ := ioutil.ReadDir("uploads/")
 		
 		if(len(files) > 500){
+			// this is trending rolf
 			panic("Waga na wa Megumin! 💥")
 		}
 		
 		for _, f := range files {
 			file, _ := os.Stat("uploads/"+f.Name())
-			modifiedtime := file.ModTime()
-			log.Println("Last modified time : ", modifiedtime)	
+			
+			//Check modification time (Also creation)
+			if(now.Sub(file.ModTime()).Hours() > 12){
+				 err := os.Remove("uploads/"+f.Name()) 
+				  if err != nil {
+					log.Println("File "+f.Name()+" cant be deleted!")
+				  }	else {
+					  deleted++
+				  }
+			}
+			
 		}
+		log.Println("Deleted "+ strconv.Itoa(deleted) +" files!")
 		time.Sleep(24 * time.Hour)
 	}
 }
@@ -59,6 +78,7 @@ func expireUid() {
 	}
 	
 	for i := 0; i < len(activeUid); i++ {
+		//Check date whith array date correlation 
 		if(math.Trunc(time.Now().Sub(dateUid[i]).Minutes()) > 2){
 			activeUid=append(activeUid[:i], activeUid[i+1:]...)
 			dateUid=append(dateUid[:i], dateUid[i+1:]...)
@@ -86,6 +106,21 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	dateUid = append(dateUid, time.Now())
 }
 
+func imageViewer(w http.ResponseWriter, r *http.Request) {
+	
+	id := r.URL.Query().Get("file")
+	content, _ := ioutil.ReadFile("uploads/"+id+".data")
+	rawdata:=string(content)
+	imgStruct := shareData{
+        Imgd:       rawdata,
+    }
+    parsedTemplate, _ := template.ParseFiles("views/share.html")
+    parsedTemplate.Execute(w,imgStruct)
+	
+	
+}
+
+
 func uploader(w http.ResponseWriter, r *http.Request) {
 	//TODO Create control toomany request
 	//TODO Set time out
@@ -103,9 +138,9 @@ func uploader(w http.ResponseWriter, r *http.Request) {
     }
 	
 	//Generate file on server
-	if(existuid){ // go rutine?
+	if(existuid){
 	  go func() {
-			datafile, _ := os.Create("uploads/"+tempFile.Uid+".file")
+			datafile, _ := os.Create("uploads/"+tempFile.Uid+".data")
 			defer datafile.Close()
 			datafile.WriteString(tempFile.Base64)
 			datafile.Close()
@@ -113,12 +148,6 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func imageViewer(w http.ResponseWriter, r *http.Request) {
-	for k, v := range r.URL.Query() {
-        fmt.Printf("%s: %s\n", k, v)
-    }
-	
-}
 
 
 
