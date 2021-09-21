@@ -4,7 +4,7 @@ CryptoPix is concept for image sharing service fully anonymous, database-less an
 
 The images are converted to b64, at this point they are treated as text (Pastebin-like system), encrypted and sent to server.
 
-Easy and minimalistic code easy to setup and modified with zero configuration
+Easy and minimalistic code, easy to setup and modified with zero configuration
 
 
 ## Functionality 
