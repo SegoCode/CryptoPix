@@ -8,7 +8,10 @@ Easy and minimalistic code easy to setup and modified with zero configuration
 
 
 ## Functionality 
-<del>*in very questionable diagram*</del>
+<del>*In very questionable diagram*</del>
+
+<img src="https://github.com/SegoCode/CryptoPix/blob/main/documents/CryptoPix%20Diagram.png">
+
 ## Database-less
 
 All sessions in the web generate a UID these uses to name the local file and uses to referer the file when it is shared, there is no any database configuration but can be easily modified to connect to a database such as Firebase. The server never knows what files are uploaded and it does not retrieve any user-related in UID data.
