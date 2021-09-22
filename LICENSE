@@ -1,0 +1,49 @@
+Copyright (c) 2021, SegoCode
+All rights reserved.
+
+Section 1 – Definitions.
+
+1. NonCommercial, means not primarily intended for or directed towards 
+   commercial advantage or monetary compensation without specific prior explicit 
+   and signed written permission by the original author of this licensed material.
+
+2. Adapted Material, means material is derived from or based upon the licensed 
+   material and in which the licensed material is translated, altered, arranged, 
+   transformed, or otherwise modified.  
+   
+Section 2 – License Conditions.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions, the following disclaimer and definitions.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions, the following disclaimer and definitions in 
+   the documentation and/or other materials provided with the distribution.
+   
+3. Redistribution and use in source and binary forms, in whole or in part, 
+   for NonCommercial purposes only; and produce, reproduce, and Share Adapted 
+   Material for NonCommercial purposes only.
+   
+4. Redistribution for Adapted Material must be available in a public compressed or archival 
+   form which include; source code of Adapted Material, all modules it contains,
+   any associated interface definition files, scripts used to control compilation 
+   and installation of executable code and provided the appropriate decompression 
+   or de-archiving software widely available for no charge.
+   
+5. Redistribution in source and binary forms directly from the original source code
+   must display the following acknowledgement in some accessible section: 
+   "This product includes software developed by SegoCode and its contributors."
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
