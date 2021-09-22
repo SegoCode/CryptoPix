@@ -21,7 +21,7 @@
 		<div class="upload-container">
 		
 		 <!-- No files attached -->
-		  <div id="dropzone" class="border-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+		  <div id="dropzone" class="border-container" ondrop="dropHandler(event);">
 			<div class="icons fa-4x">
 			  <i class="fas fa-file-image"></i>
 			</div>
@@ -35,6 +35,7 @@
 		  
 		</div>
 		<button id="uploadbutton" style="display:none;" onclick="sendPost({{.Uid}})">Upload</button>
+		<button id="copyButton" style="display:none;" onclick="share({{.Uid}});">Copy share link</button>
 		
 		<!-- Loading animation -->
 		<div id="loaderAnimation" style="display:none" class="lds-ellipsis">

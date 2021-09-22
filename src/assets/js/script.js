@@ -1,8 +1,9 @@
 var fileupload;
 
+
 function sendPost(uid) {
 	
-	//var encryptImage = CryptoJS.AES.encrypt(document.getElementById("showimg").src, 'secret key');
+	var encryptImage = CryptoJS.AES.encrypt(document.getElementById("showimg").src, 'secret key');
 	document.getElementById("uploadbutton").style.display = "none";
 	document.getElementById("loaderAnimation").style.display = "";
 	
@@ -14,10 +15,21 @@ function sendPost(uid) {
 			Uid: uid
 		  }).then(function (response) {
 			document.getElementById("loaderAnimation").style.display = "none";
-			document.getElementById("uploadbutton").style.display = "";
-			document.getElementById("uploadbutton").innerHTML = "Copy link";
+			document.getElementById("copyButton").style.display = "";
 		  })
 	})();
+}
+
+function share(uid) {
+  
+  tmpObj = document.createElement('textarea');
+  tmpObj.value = window.location.href + "share?file=" + uid;
+  document.body.appendChild(tmpObj);
+  tmpObj.select();
+  document.execCommand('copy');
+  document.body.removeChild(tmpObj);
+
+  document.getElementById("copyButton").innerHTML = "Copied";
 }
 
 
@@ -43,10 +55,5 @@ function dropHandler(ev) {
 	  } 
 }
 
-
-function dragOverHandler(ev) {
-  ev.preventDefault();
-  console.log('File(s) in drop zone');
-}
 
 

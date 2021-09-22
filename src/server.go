@@ -91,6 +91,12 @@ func expireUid() {
 ///////////////////////////// HandleFuncs /////////////////////////////
 
 func homePage(w http.ResponseWriter, r *http.Request) {
+	
+	if r.URL.Path != "/" {
+        log.Println("404")
+        return
+    }
+	
 	uid := generateToken()
 	authStruct := sessionData{
         Uid:       uid,
@@ -150,7 +156,7 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 
 
 
-
+///////////////////////////// Main /////////////////////////////
 func main() {
 	go fileCleanerWorker() //Launch worker for clean files every day
 	
