@@ -1,5 +1,5 @@
 var fileupload;
-var filekey = "pass";
+var filekey = "udf";
 
 function sendPost(uid) {
   //Show loading animation
@@ -11,6 +11,9 @@ function sendPost(uid) {
     //Stop here, this Promise make function sendPost return view update without waiting CryptoJS or axios 
     //This javascript trick is not proper way, but javascript doesn't help either whith asynchronies so...
     await new Promise(r => setTimeout(r, 0));
+
+	//Generate pass for file
+	filekey = Math.random().toString(36).substr(2);
 
     //Encrypt the base64 whith CryptoJS in AES
     var encryptData = await CryptoJS.AES.encrypt(document.getElementById("showimg").src, filekey).toString();
