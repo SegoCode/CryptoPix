@@ -48,7 +48,7 @@ func fileCleanerWorker() {
 		files, _ := ioutil.ReadDir("uploads/")
 
 		if len(files) > 500 {
-			// this is trending rolf
+			// TODO create high load management
 			panic("Waga na wa Megumin! 💥")
 		}
 
@@ -74,7 +74,7 @@ func fileCleanerWorker() {
 func expireUid() {
 
 	if len(activeUid) > 300 {
-		// this is trending rolf
+		// TODO create high load management
 	}
 
 	for i := 0; i < len(activeUid); i++ {
@@ -153,7 +153,8 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 ///////////////////////////// Main /////////////////////////////
 func main() {
 	go fileCleanerWorker() //Launch worker for clean files every day
-
+	
+	// TODO research about server cache
 	http.HandleFunc("/", homePage)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/upload", uploader)
