@@ -7,17 +7,24 @@
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
 
-  <body >
-    <!-- Bots HoneyPot -->
+  <body onload="loadView();">
 
-
-    <!-- -->
-
-	  <div class="container-viewer" >        
-		  <img id="showimg" class="img-viewer" src="{{.Imgd}}"/><!-- b64 Unsafe for golang dev i gess-->
+		<!-- Loading animation -->
+		<div class="wrapper" id="loaderAnimation">
+		<div class="lds-ellipsis">
+			<div class="loader-mod"></div>
+			<div class="loader-mod"></div>
+			<div class="loader-mod"></div>
+			<div class="loader-mod"></div>
+		</div>	
 		</div>
+	<!-- Show share img -->
+	 <div class="container-viewer" >        
+		  <img id="showimg" class="img-viewer" src="{{.Imgd}}"/>
+	</div>
 
     <!-- JS -->
-    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/share.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" crossorigin="anonymous"></script>
   </body>
 </html>

@@ -11,9 +11,11 @@
 
   <body>
     <!-- Bots HoneyPot -->
-
-
+	<input type="checkbox" name="send" value="0" style="display:none" onchange='window.location.replace("https://github.com/SegoCode");'>
+    <a id="email" href="mailto:bot@detected.bot" style="display:none;">I'm robot</a>
+	<button  style="display:none;" onclick='window.location.replace("https://github.com/SegoCode");'>Send</button>
     <!-- -->
+	
 	<div class="wrapper">
 	  <div class="container">
 		<h1 class="main-letters">Upload a image</h1>
@@ -21,7 +23,7 @@
 		<div class="upload-container">
 		
 		 <!-- No files attached -->
-		  <div id="dropzone" class="border-container" ondrop="dropHandler(event);">
+		  <div id="dropzone" class="border-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
 			<div class="icons fa-4x">
 			  <i class="fas fa-file-image"></i>
 			</div>
@@ -49,11 +51,8 @@
 	</div>
    
     <!-- JS -->
-    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" crossorigin="anonymous"></script>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" crossorigin="anonymous"></script>
-	<script src='https://use.fontawesome.com/releases/v5.0.10/js/all.js' crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js" crossorigin="anonymous"></script>
   </body>
 

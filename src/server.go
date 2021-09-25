@@ -93,7 +93,6 @@ func expireUid() {
 func homePage(w http.ResponseWriter, r *http.Request) {
 	
 	if r.URL.Path != "/" {
-        log.Println("404")
         return
     }
 	

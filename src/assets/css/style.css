@@ -83,6 +83,37 @@ button {
   padding: 15px;
 }
 
+
+
+/*---------------------------------------------------------------------
+         |  Viewer section
+ *-------------------------------------------------------------------*/
+
+
+
+.container-viewer{
+display: flex;
+justify-content: center;
+padding: 30px;
+	
+}
+
+.img-viewer {
+max-width: 80%;
+box-shadow:0 10px 16px 0 rgba(0, 0, 0, 0.2),0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+  border-radius:3px;
+}
+
+.loader-mod{
+	background: #ffffff !important;
+}
+
+
+/*---------------------------------------------------------------------
+         |  Loader section
+ *-------------------------------------------------------------------*/
+
+
 .lds-ellipsis {
   display: inline-block;
   position: relative;
@@ -137,24 +168,4 @@ button {
   100% {
     transform: translate(24px, 0);
   }
-}
-
-
-/*---------------------------------------------------------------------
-         |  Viewer section
- *-------------------------------------------------------------------*/
-
-
-
-.container-viewer{
-display: flex;
-justify-content: center;
-padding: 30px;
-	
-}
-
-.img-viewer {
-max-width: 80%;
-box-shadow:0 10px 16px 0 rgba(0, 0, 0, 0.2),0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
-  border-radius:3px;
 }
