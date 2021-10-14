@@ -33,17 +33,16 @@ body {
 }
 
 .main-letters {
-  color: #262B31;
-  letter-spacing: -.5px;
+  color: #262b31;
+  letter-spacing: -0.5px;
   font-weight: 700;
 }
 
 .upload-container {
   background-color: rgb(239, 239, 239);
-  color: #262B31;
+  color: #262b31;
   border-radius: 6px;
   padding: 10px;
-
 }
 
 .border-container {
@@ -73,7 +72,7 @@ body {
 
 button {
   background: #535c68;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 15px;
   cursor: pointer;
   border-radius: 6px;
@@ -83,19 +82,14 @@ button {
   padding: 15px;
 }
 
-
-
 /*---------------------------------------------------------------------
          |  Viewer section
  *-------------------------------------------------------------------*/
-
-
 
 .container-viewer {
   display: flex;
   justify-content: center;
   padding: 30px;
-
 }
 
 .img-viewer {
@@ -108,11 +102,9 @@ button {
   background: #ffffff !important;
 }
 
-
 /*---------------------------------------------------------------------
          |  Loader section
  *-------------------------------------------------------------------*/
-
 
 .lds-ellipsis {
   display: inline-block;
