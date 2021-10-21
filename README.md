@@ -27,8 +27,10 @@ There are a file you might reasonably want to edit if you deploy this code:
 - `config.json`, for port ip or other server details.
 
 Config details:
-`max-file-size` Bytes
-`clean-time` Hours
+
+`max-file-size` Bytes format
+
+`clean-time` Hours Format
 
 ## Demo
 <img src="https://github.com/SegoCode/CryptoPix/blob/main/media/demo.gif"/>
