@@ -24,11 +24,11 @@ The sahre link contains id for encrypted file and contains a # character is a fr
 
 There are a file you might reasonably want to edit if you deploy this code:
 
-- `server.go`, for port ip or other server details.
+- `config.json`, for port ip or other server details.
 
-CryptoPix no have any configuration file in this point, just download the `server.go` and run in root server directory.
-
-For golang enviroment you don't need download third-party libraries, is the reason why you do not see go.mod, CryptoPix has been developed in go1.16.6 version.
+Config details:
+`max-file-size` Bytes
+`clean-time` Hours
 
 ## Demo
 <img src="https://github.com/SegoCode/CryptoPix/blob/main/media/demo.gif"/>

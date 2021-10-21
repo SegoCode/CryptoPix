@@ -23,17 +23,39 @@ type shareData struct {
 	Imgd string
 }
 
-type file struct {
-	Name   string
-	Base64 string
-	Uid    string
+type fileData struct {
+	Name   string `json:"Name"`
+	Base64 string `json:"Base64"`
+	Uid    string `json:"Uid"`
 }
 
+type Config struct {
+	Server struct {
+		Port string `json:"port"`
+		Host string `json:"host"`
+	} `json:"server"`
+	Files struct {
+		MaxFileSize int `json:"max-file-size"`
+		CleanTime   int `json:"clean-time"`
+	} `json:"files"`
+}
+
+var config Config
 var activeUid []string
+
+func LoadConfiguration(file string) {
+	configFile, err := os.Open(file)
+	defer configFile.Close()
+	if err != nil {
+		log.Fatal("Configuration File NotFound")
+	}
+	jsonParser := json.NewDecoder(configFile)
+	jsonParser.Decode(&config)
+}
 
 func generateToken() string {
 	//My own non-signed questionable JWT token
-	//The token save in memory,so no one can make your own unexpired token
+	//The token save in memory,so no one can make your own unexpired non-signed token
 	now := time.Now()
 	b := make([]byte, 10)
 	rand.Read(b)
@@ -52,7 +74,7 @@ func fileCleanerWorker() {
 			timestamp, _ := strconv.ParseInt(timeStirng, 10, 64)
 			timeFile := time.Unix(timestamp, 0) // Parse to golang date
 
-			if math.Trunc(time.Now().Sub(timeFile).Hours()) >= 12 { //Check expire
+			if math.Trunc(time.Now().Sub(timeFile).Hours()) >= float64(config.Files.CleanTime) { //Check expire
 				err := os.Remove("uploads/" + f.Name())
 				if err != nil {
 					log.Println("File " + f.Name() + " cant be deleted!")
@@ -119,7 +141,7 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 	// TODO create high load management
 	// TODO show alert in web, total capacity
 	// TODO Create control toomany request
-	var tempFile file
+	var tempFile fileData
 	var existuid = false
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&tempFile)
@@ -136,7 +158,7 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 	if existuid {
 		go func() {
 			filebytes := 3 * (len(tempFile.Base64) / 4)
-			if filebytes < 20000000 { //Check file size before creation, miss 2 or 1 byte from B64
+			if filebytes < config.Files.MaxFileSize { //Check file size before creation, miss 2 or 1 byte from B64
 				datafile, _ := os.Create("uploads/" + tempFile.Uid + ".data")
 				defer datafile.Close()
 				datafile.WriteString(tempFile.Base64)
@@ -154,6 +176,7 @@ func main() {
 	http.HandleFunc("/upload", uploader)
 	http.HandleFunc("/share", imageViewer)
 
-	log.Println("Server running...")
-	log.Fatal(http.ListenAndServe(":9090", nil)) // Server listener
+	LoadConfiguration("config.json")
+	log.Println("Server running at " + config.Server.Host + ":" + config.Server.Port + "...")
+	log.Fatal(http.ListenAndServe(config.Server.Host+":"+config.Server.Port, nil)) // Server listener
 }

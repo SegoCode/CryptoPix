@@ -1,52 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <title>SegoCode</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Varela+Round" rel="stylesheet">
-    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.10/css/all.css'>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Varela+Round" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
 
   <body>
     <!-- Bots HoneyPot -->
-    <input type="checkbox" name="send" value="0" style="display:none" onchange='window.location.replace("https://github.com/SegoCode");'>
-    <a id="email" href="mailto:bot@detected.bot" style="display:none;">I'm robot</a>
-    <button style="display:none;" onclick='window.location.replace("https://github.com/SegoCode");'>Send</button>
+    <input type="checkbox" name="send" value="0" style="display: none" onchange='window.location.replace("https://github.com/SegoCode");' />
+    <a id="email" href="mailto:bot@detected.bot" style="display: none">I'm robot</a>
+    <button style="display: none" onclick='window.location.replace("https://github.com/SegoCode");'>Send</button>
     <!-- -->
 
     <div class="wrapper">
       <div class="container">
         <h1 class="main-letters">Upload a image</h1>
-        <h4 class="main-letters"> Anonymous image sharing with client side encryption</h4>
+        <h4 class="main-letters">Anonymous image sharing with client side encryption</h4>
         <div class="upload-container">
-
           <!-- No files attached -->
           <div id="dropzone" class="border-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
             <div class="icons fa-4x">
               <i class="fas fa-file-image"></i>
             </div>
-            <p> Drag and drop the image here from your computer.</p>
-
+            <p>Drag and drop the image here from your computer.</p>
           </div>
 
           <!-- Files attached -->
-          <p id="filename" style="display:none;"></p>
-          <img id="showimg" style="display:none;" class="img-panel" src="" />
-
+          <p id="filename" style="display: none"></p>
+          <img id="showimg" style="display: none" class="img-panel" src="" />
         </div>
-        <button id="uploadbutton" style="display:none;" onclick="sendPost({{.Uid}})">Upload</button>
-        <button id="copyButton" style="display:none;" onclick="share({{.Uid}});">Copy share link</button>
+        <button id="uploadbutton" style="display: none" onclick="sendPost({{.Uid}})">Upload</button>
+        <button id="copyButton" style="display: none" onclick="share({{.Uid}});">Copy share link</button>
 
         <!-- Loading animation -->
-        <div id="loaderAnimation" style="display:none" class="lds-ellipsis">
+        <div id="loaderAnimation" style="display: none" class="lds-ellipsis">
           <div></div>
           <div></div>
           <div></div>
           <div></div>
         </div>
-
       </div>
     </div>
 
@@ -55,5 +50,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js" crossorigin="anonymous"></script>
   </body>
-
 </html>
