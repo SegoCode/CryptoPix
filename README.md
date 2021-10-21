@@ -32,6 +32,9 @@ Config details:
 
 `clean-time` Hours Format
 
+After this just download repo and run `server.go` in root server directory.
+
+
 ## Demo
 <img src="https://github.com/SegoCode/CryptoPix/blob/main/media/demo.gif"/>
 
