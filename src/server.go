@@ -43,6 +43,9 @@ type Config struct {
 var config Config
 var activeUid []string
 
+///////////////////////////// Utils /////////////////////////////
+
+//Load configuration file for server
 func LoadConfiguration(file string) {
 	configFile, err := os.Open(file)
 	defer configFile.Close()
@@ -171,10 +174,13 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 func main() {
 	go fileCleanerWorker() //Launch worker for clean files every day
 
+	//PAGES
 	http.HandleFunc("/", homePage)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
-	http.HandleFunc("/upload", uploader)
 	http.HandleFunc("/share", imageViewer)
+
+	//REST
+	http.HandleFunc("/upload", uploader)
 
 	LoadConfiguration("config.json")
 	log.Println("Server running at " + config.Server.Host + ":" + config.Server.Port + "...")
