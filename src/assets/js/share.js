@@ -10,6 +10,7 @@ function loadView() {
     document.getElementById('showimg').src = imgDecrypted.toString(CryptoJS.enc.Utf8);
     document.getElementById('loaderAnimation').style.display = 'none';
   } else {
+    document.getElementById('showimg').style.display = 'none';
     alert('The url not contains decryption password :(');
     location.href = '/';
   }

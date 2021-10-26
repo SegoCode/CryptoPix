@@ -1,83 +1,108 @@
 package main
 
 import (
-	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
-	"math"
-	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
+//Struct for html template
 type sessionData struct {
 	Uid string
 }
 
+//Struct for html template
 type shareData struct {
 	Imgd string
 }
 
+//Struct for REST request
 type fileData struct {
 	Name   string `json:"Name"`
 	Base64 string `json:"Base64"`
 	Uid    string `json:"Uid"`
 }
 
-type Config struct {
+//Struct for local config
+type configData struct {
 	Server struct {
 		Port string `json:"port"`
 		Host string `json:"host"`
 	} `json:"server"`
 	Files struct {
-		MaxFileSize int `json:"max-file-size"`
-		CleanTime   int `json:"clean-time"`
+		MaxFileSize int    `json:"max-file-size"`
+		CleanTime   int    `json:"clean-time"`
+		SecretKey   string `json:"secret-key"`
 	} `json:"files"`
 }
 
-var config Config
-var activeUid []string
+var config configData
 
 ///////////////////////////// Utils /////////////////////////////
 
 //Load configuration file for server
 func LoadConfiguration(file string) {
 	configFile, err := os.Open(file)
-	defer configFile.Close()
+
 	if err != nil {
 		log.Fatal("Configuration File NotFound")
 	}
+	defer configFile.Close()
+
 	jsonParser := json.NewDecoder(configFile)
 	jsonParser.Decode(&config)
 }
 
-func generateToken() string {
-	//My own non-signed questionable JWT token
-	//The token save in memory,so no one can make your own unexpired non-signed token
-	now := time.Now()
-	b := make([]byte, 10)
-	rand.Read(b)
-	return hex.EncodeToString(b) + "." + strconv.FormatInt(now.Unix(), 10) //Random token + timestamp
+//JWT Token generator
+func createJWTToken() string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp": time.Now().Add(time.Minute * 5).Unix(), //Max token life
+	})
+
+	t, _ := token.SignedString([]byte(config.Files.SecretKey))
+
+	return t
+}
+
+//JWT Token validator
+func verifyToken(toc string) bool {
+	token, err := jwt.Parse(toc, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Err")
+		}
+		return []byte(config.Files.SecretKey), nil
+	})
+
+	if err == nil && token.Valid {
+		return true
+	}
+
+	return false
 }
 
 func fileCleanerWorker() {
+	//TODO search about the best way to delete old files
 	log.Println("Cleaning old files...")
+	loc, _ := time.LoadLocation("UTC")
+	now := time.Now().In(loc)
 
-	for { //loop every 24h
+	for {
 		deleted := 0
 		files, _ := ioutil.ReadDir("uploads/")
+
 		for _, f := range files {
+			file, _ := os.Stat("uploads/" + f.Name())
 
-			timeStirng := strings.Split(f.Name(), ".")[1] //Catch timestamp from file name
-			timestamp, _ := strconv.ParseInt(timeStirng, 10, 64)
-			timeFile := time.Unix(timestamp, 0) // Parse to golang date
-
-			if math.Trunc(time.Now().Sub(timeFile).Hours()) >= float64(config.Files.CleanTime) { //Check expire
+			//Check modification time (Also creation)
+			if now.Sub(file.ModTime()).Hours() > 12 {
 				err := os.Remove("uploads/" + f.Name())
 				if err != nil {
 					log.Println("File " + f.Name() + " cant be deleted!")
@@ -85,80 +110,62 @@ func fileCleanerWorker() {
 					deleted++
 				}
 			}
+
 		}
 		log.Println("Deleted " + strconv.Itoa(deleted) + " files!")
 		time.Sleep(24 * time.Hour)
 	}
 }
 
-func expireUid() {
-	for i := 0; i < len(activeUid); i++ {
-		timeStirng := strings.Split(activeUid[i], ".")[1] //Catch timestamp from token
-
-		timestamp, _ := strconv.ParseInt(timeStirng, 10, 64)
-		timeToken := time.Unix(timestamp, 0) // Parse to golang date
-
-		if math.Trunc(time.Now().Sub(timeToken).Minutes()) >= 2 { //Check expire
-			activeUid = append(activeUid[:i], activeUid[i+1:]...)
-		}
-	}
-
-}
-
 ///////////////////////////// HandleFuncs /////////////////////////////
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 
+	//Redirect to home page
 	if r.URL.Path != "/" {
-		return
+		log.Println("Try to access: " + r.URL.Path)
+		http.ServeFile(w, r, "views/404.html")
+	} else {
+		//Struct for template
+		uid := createJWTToken()
+		authStruct := sessionData{
+			Uid: uid,
+		}
+		//Create template
+		parsedTemplate, _ := template.ParseFiles("views/index.html")
+		//Send template
+		parsedTemplate.Execute(w, authStruct)
 	}
-
-	uid := generateToken()
-	authStruct := sessionData{
-		Uid: uid,
-	}
-	parsedTemplate, _ := template.ParseFiles("views/index.html")
-	parsedTemplate.Execute(w, authStruct)
-
-	//Clean old UID
-	expireUid()
-
-	//Generate UID
-	activeUid = append(activeUid, uid)
 }
 
 func imageViewer(w http.ResponseWriter, r *http.Request) {
 
-	id := r.URL.Query().Get("file")
-	content, _ := ioutil.ReadFile("uploads/" + id + ".data")
-	rawdata := string(content)
-	imgStruct := shareData{
-		Imgd: rawdata,
-	}
-	parsedTemplate, _ := template.ParseFiles("views/share.html")
-	parsedTemplate.Execute(w, imgStruct)
+	id := r.URL.Query().Get("file") //Get from url file id without fragment
+	content, err := ioutil.ReadFile("uploads/" + id + ".data")
 
+	if err != nil {
+		//File dosent exist
+		http.ServeFile(w, r, "views/404.html")
+	} else {
+		//Struct for template
+		rawdata := string(content)
+		imgStruct := shareData{
+			Imgd: rawdata,
+		}
+		//Create template
+		parsedTemplate, _ := template.ParseFiles("views/share.html")
+		//Send template
+		parsedTemplate.Execute(w, imgStruct)
+	}
 }
 
 func uploader(w http.ResponseWriter, r *http.Request) {
-	// TODO create high load management
-	// TODO show alert in web, total capacity
-	// TODO Create control toomany request
 	var tempFile fileData
-	var existuid = false
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&tempFile)
 
-	//Check if exist uid, this "prevent" use api out of web
-	for _, auid := range activeUid {
-		if auid == tempFile.Uid {
-			existuid = true
-			break
-		}
-	}
-
-	//Generate file on server
-	if existuid {
+	//Generate file on server asynchronous
+	if verifyToken(tempFile.Uid) {
 		go func() {
 			filebytes := 3 * (len(tempFile.Base64) / 4)
 			if filebytes < config.Files.MaxFileSize { //Check file size before creation, miss 2 or 1 byte from B64
@@ -167,12 +174,15 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 				datafile.WriteString(tempFile.Base64)
 			}
 		}()
+	} else {
+		w.WriteHeader(403) //Not valid JWT token
 	}
 }
 
 ///////////////////////////// Main /////////////////////////////
 func main() {
-	go fileCleanerWorker() //Launch worker for clean files every day
+	go fileCleanerWorker()           //Launch worker for clean files every day
+	LoadConfiguration("config.json") //Load config
 
 	//PAGES
 	http.HandleFunc("/", homePage)
@@ -182,7 +192,9 @@ func main() {
 	//REST
 	http.HandleFunc("/upload", uploader)
 
-	LoadConfiguration("config.json")
+	//SERVER
 	log.Println("Server running at " + config.Server.Host + ":" + config.Server.Port + "...")
 	log.Fatal(http.ListenAndServe(config.Server.Host+":"+config.Server.Port, nil)) // Server listener
+	//log.Fatal(http.ListenAndServeTLS(config.Server.Host+":"+config.Server.Port, "full-cert.crt", "private-key.key", nil))
+
 }
