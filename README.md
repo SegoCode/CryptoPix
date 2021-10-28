@@ -32,6 +32,9 @@ Config details:
 
 `clean-time` Hours Format
 
+`secret-key` JWT private server key
+
+
 After this just download repo and run `server.go` in root server directory.
 
 
