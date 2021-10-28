@@ -1,2 +1,5 @@
+# exclude 
+src/uploads/*
 
-src/uploads/
+# exceptions
+!src/uploads/.gitfolder

@@ -20,7 +20,8 @@ function sendPost(uid) {
 
     //Generate POST petition
     var axios = window.axios;
-    axios.post('./upload', {
+    axios
+      .post('./upload', {
         Name: fileupload.name,
         Base64: encryptData,
         Uid: uid,
@@ -29,12 +30,11 @@ function sendPost(uid) {
         //Hide loader animation
         document.getElementById('loaderAnimation').style.display = 'none';
         document.getElementById('copyButton').style.display = '';
-      }).catch(
-        function (error) {
-          alert('Session expired 👋')
-          location.reload();
-        }
-      );
+      })
+      .catch(function (error) {
+        alert('Session expired 👋');
+        location.reload();
+      });
   }
 }
 

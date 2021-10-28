@@ -1,17 +1,20 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 //Struct for html template
@@ -24,6 +27,11 @@ type shareData struct {
 	Imgd string
 }
 
+//Struct for delete file
+type jwtTimeStamp struct {
+	CreationDate int `json:"exp"`
+}
+
 //Struct for REST request
 type fileData struct {
 	Name   string `json:"Name"`
@@ -34,13 +42,13 @@ type fileData struct {
 //Struct for local config
 type configData struct {
 	Server struct {
-		Port string `json:"port"`
-		Host string `json:"host"`
+		Port string `json:"port"` //Server Port
+		Host string `json:"host"` //Server ip
 	} `json:"server"`
 	Files struct {
-		MaxFileSize int    `json:"max-file-size"`
-		CleanTime   int    `json:"clean-time"`
-		SecretKey   string `json:"secret-key"`
+		MaxFileSize int    `json:"max-file-size"` //Bytes
+		CleanTime   int    `json:"clean-time"`    //hours
+		SecretKey   string `json:"secret-key"`    //Secret key for JWT
 	} `json:"files"`
 }
 
@@ -88,32 +96,32 @@ func verifyToken(toc string) bool {
 	return false
 }
 
-func fileCleanerWorker() {
-	//TODO search about the best way to delete old files
-	log.Println("Cleaning old files...")
-	loc, _ := time.LoadLocation("UTC")
-	now := time.Now().In(loc)
-
-	for {
+func fileCleanerWorker(timer *time.Ticker) {
+	for range timer.C { //loop every tick
+		log.Println("Cleaning old files...")
 		deleted := 0
 		files, _ := ioutil.ReadDir("uploads/")
-
 		for _, f := range files {
-			file, _ := os.Stat("uploads/" + f.Name())
 
-			//Check modification time (Also creation)
-			if now.Sub(file.ModTime()).Hours() > 12 {
-				err := os.Remove("uploads/" + f.Name())
-				if err != nil {
-					log.Println("File " + f.Name() + " cant be deleted!")
-				} else {
-					deleted++
+			timeStirng := strings.Split(f.Name(), ".")[1]            //Catch timestamp from file name
+			data, err := base64.StdEncoding.DecodeString(timeStirng) //Decoding
+			if err == nil {
+				tmps := jwtTimeStamp{}                             //Init Struct
+				json.Unmarshal(data, &tmps)                        //Mapping json
+				timeFile := time.Unix(int64(tmps.CreationDate), 0) //Parse to golang date
+				elapsed := time.Since(timeFile)                    //Elapse time
+
+				if math.Trunc(elapsed.Hours()) >= float64(config.Files.CleanTime) { //Check expire
+					err := os.Remove("uploads/" + f.Name())
+					if err != nil {
+						log.Println("File " + f.Name() + " cant be deleted!")
+					} else {
+						deleted++
+					}
 				}
 			}
-
 		}
 		log.Println("Deleted " + strconv.Itoa(deleted) + " files!")
-		time.Sleep(24 * time.Hour)
 	}
 }
 
@@ -160,13 +168,13 @@ func imageViewer(w http.ResponseWriter, r *http.Request) {
 }
 
 func uploader(w http.ResponseWriter, r *http.Request) {
-	var tempFile fileData
+	var tempFile fileData //Init Struct
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&tempFile)
 
 	//Generate file on server asynchronous
 	if verifyToken(tempFile.Uid) {
-		go func() {
+		go func() { //Asynchronous creation
 			filebytes := 3 * (len(tempFile.Base64) / 4)
 			if filebytes < config.Files.MaxFileSize { //Check file size before creation, miss 2 or 1 byte from B64
 				datafile, _ := os.Create("uploads/" + tempFile.Uid + ".data")
@@ -181,7 +189,9 @@ func uploader(w http.ResponseWriter, r *http.Request) {
 
 ///////////////////////////// Main /////////////////////////////
 func main() {
-	go fileCleanerWorker()           //Launch worker for clean files every day
+	ticker := time.NewTicker(24 * time.Hour) //Set worker time
+	defer ticker.Stop()
+	go fileCleanerWorker(ticker)     //Launch worker for clean files every day
 	LoadConfiguration("config.json") //Load config
 
 	//PAGES
